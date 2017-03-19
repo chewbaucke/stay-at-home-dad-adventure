@@ -24,7 +24,7 @@ def get_choice(options, constrained_prompt)
       bad_input = false
     elsif !constrained_prompt
 
-      if choice =~ /^\d+$/
+      if choice =~ /\A\d+\Z/
         bad_input = false
       else
         puts 'Man, learn to type a number!'
