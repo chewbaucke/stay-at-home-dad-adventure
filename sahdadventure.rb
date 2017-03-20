@@ -1,34 +1,25 @@
-def generate_choices(choices, constrained_prompt)
+def generate_options(choices)
   options = []
 
-  if constrained_prompt
-    choices.each.with_index(1) do |choice, index|
-      puts "#{index}. ", choice
-      options.push(index)
-    end
-  else
-    choices.each { |choice| puts choice }
+  choices.each.with_index(1) do |choice, index|
+    puts "#{index}. #{choice}"
+    options.push(index.to_i)
   end
 
   options
 end
 
-def get_choice(options, constrained_prompt)
-  bad_input = true
+def input_choice(choices)
+  options = generate_options(choices)
 
-  while bad_input
+  good_input = false
+
+  until good_input
     print '>'
     choice = $stdin.gets
 
-    if options.include? choice.to_i
-      bad_input = false
-    elsif !constrained_prompt
-
-      if choice =~ /\A\d+\Z/
-        bad_input = false
-      else
-        puts 'Man, learn to type a number!'
-      end
+    if options.include? choice.chomp.to_i
+      good_input = true
 
     else
       puts 'Don\'t recognize that choice. Choose again!'
@@ -39,20 +30,47 @@ def get_choice(options, constrained_prompt)
   choice.chomp.to_i
 end
 
-def prompt(description, choices, constrained_prompt)
-  description.each { |line| puts line }
+def input_amount
+  good_input = false
 
-  options = generate_choices(choices, constrained_prompt)
+  until good_input
+    print '>'
+    input = $stdin.gets
 
-  get_choice(options, constrained_prompt)
+    if input =~ /\A\d+\Z/
+      good_input = true
+    else
+      puts 'Man, learn to type a number!'
+    end
+  end
+
+  input.chomp.to_i
 end
 
-choice = prompt(['You enter a dark room.'], %w(right left), true)
+def get_choice(question, choices)
+  puts question
+
+  input_choice(choices)
+end
+
+def get_amount(question)
+  puts question
+
+  input_amount
+end
+
+def describe_room(description)
+  description.each { |line| puts line }
+end
+
+describe_room(['You enter a dark room.', 'It\'s hard to see'])
+choice = get_choice('which way?', %w(right left))
 
 puts choice
 puts choice.class
 
-choice = prompt(['Some stuff'], ['How much do you take?'], false)
+describe_room(['You found some stuff!'])
+choice = get_amount('How much do you take?')
 
 puts choice
 puts choice.class
